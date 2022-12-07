@@ -44,6 +44,8 @@ class Dinosaur(Sprite):
     
     def run(self):
         self.image = RUNNING[0] if self.step_index < 5 else RUNNING[1]
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS
         self.step_index += 1
        
     def jump(self):
