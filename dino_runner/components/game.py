@@ -20,7 +20,7 @@ class Game:
         self.y_pos_bg = 380
 
         self.player = Dinosaur()
-        self.obstacle_manage = ObstacleManager()
+        self.obstacle_manager = ObstacleManager()
         self.score = Score()
         self.death_count = 0
 
@@ -37,11 +37,12 @@ class Game:
     def run(self):
         # Game loop: events - update - draw
         self.playing = True
+        self.obstacle_manager.reset_obstacles()
         while self.playing:
             self.events()
             self.update()
             self.draw()
-        pygame.quit()
+
 
     def events(self):
         for event in pygame.event.get():
@@ -52,7 +53,7 @@ class Game:
     def update(self):
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
-        self.obstacle_manage.update(self)
+        self.obstacle_manager.update(self)
         self.score.update(self)
 
     def draw(self):
@@ -60,7 +61,7 @@ class Game:
         self.screen.fill((255, 255, 255))
         self.draw_background()
         self.player.draw(self.screen)
-        self.obstacle_manage.draw(self.screen)
+        self.obstacle_manager.draw(self.screen)
         self.score.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
@@ -77,20 +78,40 @@ class Game:
     def show_menu(self):
         # poner color al fondo
         self.screen.fill((255, 255, 255))
+
         # mostrar mensaje de inicio
         half_screen_width = SCREEN_WIDTH // 2
-        half_screen_heigt = SCREEN_HEIGHT // 2
+        half_screen_height = SCREEN_HEIGHT // 2
         if not self.death_count:
             font = pygame.font.Font(FONT_STYLE, 30)
-            message = font.render("Press any key to start", True, (0, 0, 0))
+            message = font.render("Press any key to Start", True, (0, 0, 0))
             message_rect = message.get_rect()
-            message_rect.center = (half_screen_width, half_screen_heigt)
+            message_rect.center = (half_screen_width, half_screen_height)
             self.screen.blit(message, message_rect)
         else:
+            
+            # mostrar puntos obtenidos
+            font = pygame.font.Font(FONT_STYLE, 30)
+            message = font.render(f"Your Score: " + {self.current_score}, True, (0, 0, 0))
+            message_rect = message.get_rect()
+            message_rect.center = (half_screen_width, half_screen_height + 50)
+            self.screen.blit(message, message_rect)
+            #mostrar mensaje de reinico
+            font = pygame.font.Font(FONT_STYLE, 30)
+            message = font.render("Press any key to Resstart", True, (0, 0, 0))
+            message_rect = message.get_rect()
+            message_rect.center = (half_screen_width, half_screen_height)
+            self.screen.blit(message, message_rect)
+            #mostrar muertes totales
+            font = pygame.font.Font(FONT_STYLE, 30)
+            message = font.render("You death: ", True, (0, 0, 0))
+            message_rect = message.get_rect()
+            message_rect.center = (half_screen_width, half_screen_height + 100)
+            self.screen.blit(message, message_rect)
             print(self.death_count)
+            
         # mostrar images como icono
-        self.screen.blit(DINO_START, (half_screen_width -
-                         20, half_screen_heigt - 140))
+        self.screen.blit(DINO_START, (half_screen_width - 20, half_screen_height - 140))
         # actualizar eventos
         pygame.display.flip()
         # manejar eventos
